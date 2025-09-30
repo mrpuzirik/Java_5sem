@@ -15,36 +15,54 @@ public class SentenceWordCounterBuffer {
         try (Scanner scanner = new Scanner(System.in)) {
 
             // Введення тексту користувачем
-            System.out.println("Введіть текст:");
+            System.out.println("Input text:");
             StringBuffer text = new StringBuffer(scanner.nextLine());
 
-            // Введення слів для пошуку
-            System.out.println("Введіть слова для пошуку (через пробіл):");
-            String line = scanner.nextLine();
-
-            if (line.trim().isEmpty()) {
-                throw new IllegalArgumentException("Список слів не може бути порожнім!");
+            if (trim(text).isEmpty()) {
+                throw new IllegalArgumentException("The text cannot be empty!");
             }
 
-            String[] inputWords = line.split("\\s+");
-            StringBuffer[] words = new StringBuffer[inputWords.length];
-            for (int i = 0; i < inputWords.length; i++) {
-                words[i] = new StringBuffer(inputWords[i]);
+            // Введення слів для пошуку
+            System.out.println("Enter search terms (separated by a space):");
+            StringBuffer lineBuffer = new StringBuffer(scanner.nextLine());
+
+            if (trim(lineBuffer).isEmpty()) {
+                throw new IllegalArgumentException("The word list cannot be empty!");
+            }
+
+            // Розбиваємо рядок на слова вручну
+            List<StringBuffer> words = new ArrayList<>();
+            StringBuffer currentWord = new StringBuffer();
+
+            for (int i = 0; i < lineBuffer.length(); i++) {
+                char c = lineBuffer.charAt(i);
+                if (Character.isWhitespace(c)) {
+                    if (!currentWord.isEmpty()) {
+                        words.add(new StringBuffer(currentWord));
+                        currentWord.setLength(0);
+                    }
+                }
+                else {
+                    currentWord.append(c);
+                }
+            }
+            if (!currentWord.isEmpty()) {
+                words.add(new StringBuffer(currentWord));
             }
 
             // Виконуємо підрахунок
             Map<StringBuffer, Integer> result = countWordOccurrences(text, words);
 
             // Виводимо результат
-            System.out.println("Результат:");
+            System.out.println("Result:");
             for (StringBuffer word : words) {
-                System.out.println(word.toString() + " → " + result.get(word) + " речень");
+                System.out.println(word.toString() + " -> " + result.get(word) + " sentence");
             }
 
         } catch (IllegalArgumentException e) {
-            System.err.println("Помилка: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Сталася непередбачена помилка при введенні даних.");
+            System.err.println("An unexpected error occurred while entering data.");
         }
     }
 
@@ -52,26 +70,19 @@ public class SentenceWordCounterBuffer {
      * Підраховує кількість речень, у яких зустрічається кожне слово.
      */
     public static Map<StringBuffer, Integer> countWordOccurrences(
-            StringBuffer text, StringBuffer[] words) {
+            StringBuffer text, List<StringBuffer> words) {
 
-        // Карта для результатів
         Map<StringBuffer, Integer> wordCounts = new HashMap<>();
         for (StringBuffer word : words) {
             wordCounts.put(word, 0);
         }
 
-        // Розбиваємо текст на речення
         List<StringBuffer> sentences = splitIntoSentences(text);
 
-        // Перевіряємо кожне речення
         for (StringBuffer sentence : sentences) {
-            // Робимо речення в нижньому регістрі + прибираємо пробіли
             StringBuffer loweredSentence = toLowerCase(trim(sentence));
-
-            // Перевіряємо кожне слово в реченні
             for (StringBuffer word : words) {
                 if (contains(loweredSentence, toLowerCase(word))) {
-                    // Збільшуємо лічильник
                     wordCounts.put(word, wordCounts.get(word) + 1);
                 }
             }
