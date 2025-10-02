@@ -66,9 +66,7 @@ public class SentenceWordCounterBuffer {
         }
     }
 
-    /**
-     * Підраховує кількість речень, у яких зустрічається кожне слово.
-     */
+    /** Підраховує кількість речень, у яких зустрічається кожне слово. */
     public static Map<StringBuffer, Integer> countWordOccurrences(
             StringBuffer text, List<StringBuffer> words) {
 
@@ -90,7 +88,7 @@ public class SentenceWordCounterBuffer {
         return wordCounts;
     }
 
-    // Розбиває текст на речення за розділовими знаками (.!?)
+    /** Розбиває текст на речення за розділовими знаками (.!?) */
     private static List<StringBuffer> splitIntoSentences(StringBuffer text) {
         List<StringBuffer> sentences = new ArrayList<>();
         StringBuffer current = new StringBuffer();
@@ -112,7 +110,7 @@ public class SentenceWordCounterBuffer {
         return sentences;
     }
 
-    // Прибирає пробіли на початку і в кінці рядка
+    /** Прибирає пробіли на початку і в кінці рядка */
     private static StringBuffer trim(StringBuffer sb) {
         int start = 0;
         int end = sb.length() - 1;
@@ -131,7 +129,7 @@ public class SentenceWordCounterBuffer {
         return result;
     }
 
-    // Перетворює всі символи на нижній регістр
+    /** Перетворює всі символи на нижній регістр */
     private static StringBuffer toLowerCase(StringBuffer sb) {
         StringBuffer result = new StringBuffer();
         for (int i = 0; i < sb.length(); i++) {
@@ -140,7 +138,7 @@ public class SentenceWordCounterBuffer {
         return result;
     }
 
-    // Перевіряє, чи містить text підрядок word (аналог contains)
+    /** Перевіряє, чи містить text підрядок word */
     private static boolean contains(StringBuffer text, StringBuffer word) {
         int n = text.length();
         int m = word.length();
