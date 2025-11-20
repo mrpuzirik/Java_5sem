@@ -4,11 +4,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Клас Text представляє текст як набір речень.
+ * Клас {@code Text} представляє текст як послідовність речень.
+ * <p>
+ * Текст отримується у вигляді {@link StringBuffer}, після чого очищається
+ * від зайвих пробілів та розбивається на речення за допомогою розділових знаків:
+ * <ul>
+ *     <li>'.' — крапка</li>
+ *     <li>'!' — знак оклику</li>
+ *     <li>'?' — знак питання</li>
+ * </ul>
+ * Кожне виявлене речення зберігається у вигляді об’єкта {@link Sentence}.
  */
 class Text {
+
+    /**
+     * Список речень, з яких складається текст.
+     * Порядок речень відповідає їхньому порядку у вихідному тексті.
+     */
     private final List<Sentence> sentences = new ArrayList<>();
 
+    /**
+     * Створює новий об’єкт {@code Text} на основі переданого буфера тексту.
+     * <p>
+     * Алгоритм роботи:
+     * <ol>
+     *     <li>Видаляються зайві пробіли та табуляції.</li>
+     *     <li>Посимвольно формується речення у тимчасовому буфері.</li>
+     *     <li>При досягненні кінця речення ('.', '!', '?') створюється новий
+     *     об’єкт {@link Sentence}.</li>
+     *     <li>Останній фрагмент тексту також додається як речення,
+     *     якщо він не є порожнім.</li>
+     * </ol>
+     *
+     * @param textBuffer сирцевий текст у вигляді {@link StringBuffer}
+     */
     public Text(StringBuffer textBuffer) {
         StringBuffer cleaned = normalizeSpaces(textBuffer);
         StringBuffer current = new StringBuffer();
@@ -23,23 +52,37 @@ class Text {
             }
         }
 
+        // Додаємо залишкове речення, якщо таке є
         if (!current.isEmpty()) {
             sentences.add(new Sentence(current));
         }
     }
 
+    /**
+     * Повертає список усіх речень, що містяться у тексті.
+     *
+     * @return список об’єктів {@link Sentence}
+     */
     public List<Sentence> getSentences() {
         return sentences;
     }
 
     /**
-     * Замінює послідовності пробілів та табуляцій одним пробілом.
+     * Нормалізує пробіли у тексті: замінює будь-яку послідовність
+     * пробілів або табуляцій одним пробілом.
+     * <p>
+     * Використовується як підготовчий етап перед розбиттям на речення.
+     *
+     * @param sb вхідний буфер тексту
+     * @return новий {@link StringBuffer} з нормалізованими пробілами
      */
     private static StringBuffer normalizeSpaces(StringBuffer sb) {
         StringBuffer result = new StringBuffer();
         boolean spaceSeen = false;
+
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
+
             if (Character.isWhitespace(c)) {
                 if (!spaceSeen) {
                     result.append(' ');
@@ -50,6 +93,7 @@ class Text {
                 spaceSeen = false;
             }
         }
+
         return new StringBuffer(result.toString().trim());
     }
 }
